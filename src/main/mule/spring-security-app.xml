@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<mule xmlns:spring="http://www.mulesoft.org/schema/mule/spring" 
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns="http://www.mulesoft.org/schema/mule/core" 
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core 
+        http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http 
+        http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/ee/core 
+        http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+        http://www.mulesoft.org/schema/mule/spring 
+        http://www.mulesoft.org/schema/mule/spring/current/mule-spring.xsd">
+ 
+        <spring:config name="springConfig" files="beans.xml" doc:id="a22ea913-252c-48ee-b523-2a105c5993fb" />
+ 
+        <spring:security-manager>
+                <spring:delegate-security-provider name="memory-provider" delegate-ref="authenticationManager" />
+        </spring:security-manager>
+ 
+        <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="98b784f5-b1c3-4dd1-883b-24a96be528c7" >
+                <http:listener-connection port="8081" host="0.0.0.0"/>
+        </http:listener-config>
+        
+        <flow name="spring-security-appFlow" doc:id="ef2d6884-cc4d-4c46-9dfc-7a762fc55120" >
+                <http:listener doc:name="Listener" doc:id="e75001a1-7e49-4290-8ed9-f98d301a8d7a" config-ref="HTTP_Listener_config" path="/test">
+                </http:listener>
+                    <http:basic-security-filter realm="Test" />
+                <spring:authorization-filter doc:id="273634b2-1484-49d8-9427-6d304cc2e9be" requiredAuthorities="ROLE_ADMIN"/>
+		<set-payload value='#["Hello!"]' doc:name="Set Payload" doc:id="6eed12af-ee88-429a-9f27-287d1aa72287" />
+		<logger level="INFO" doc:name="Logger" doc:id="662bfa4d-9674-4bb0-a734-e3177ed024db" message="Basic Authentication Successful"/>
+        </flow>
+ 
+</mule>
